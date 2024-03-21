@@ -44,6 +44,10 @@ class Task extends Model
         $this->completed_at = $this->completed_at ? null : now();
         $this->save();
 
+        if ($this->completed_at) {
+            TaskCompleted::dispatch($this);
+        }
+
         return true;
     }
 
