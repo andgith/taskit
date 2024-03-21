@@ -17,7 +17,8 @@ class ShowTasksTest extends TestCase
     /** @test */
     public function page_renders_correctly()
     {
-        $this->actingAs(User::factory()->create())->get('/tasks')
+        $this->actingAs(User::factory()->create())
+            ->get('/tasks')
             ->assertSeeLivewire(ShowTasks::class);
     }
 
@@ -32,7 +33,8 @@ class ShowTasksTest extends TestCase
     {
         $user = User::factory()->hasTasks(2)->create();
 
-        Livewire::actingAs($user)->test(ShowTasks::class)
+        Livewire::actingAs($user)
+            ->test(ShowTasks::class)
             ->assertViewHas('tasks', function ($tasks) {
                 return count($tasks) == 2;
             });
@@ -46,7 +48,8 @@ class ShowTasksTest extends TestCase
         $task1 = Task::factory()->for($user)->create();
         $task2 = Task::factory()->for($user)->create();
 
-        Livewire::actingAs($user)->test(ShowTasks::class)
+        Livewire::actingAs($user)
+            ->test(ShowTasks::class)
             ->assertSee($task1->title)
             ->assertSee($task2->title);
     }
@@ -60,14 +63,51 @@ class ShowTasksTest extends TestCase
         $tasksForUser1 = Task::factory(2)->for($user1)->create();
         $tasksForUser2 = Task::factory()->for($user2)->create();
 
-        Livewire::actingAs($user1)->test(ShowTasks::class)
+        Livewire::actingAs($user1)
+            ->test(ShowTasks::class)
             ->assertViewHas('tasks', function ($tasks) {
                 return count($tasks) == 2;
             });
 
-        Livewire::actingAs($user2)->test(ShowTasks::class)
+        Livewire::actingAs($user2)
+            ->test(ShowTasks::class)
             ->assertViewHas('tasks', function ($tasks) {
                 return count($tasks) == 1;
             });
+    }
+
+    /** @test */
+    public function it_can_add_a_new_task_for_user()
+    {
+        $user = User::factory()->create();
+
+        $this->assertEquals(0, $user->tasks()->count());
+
+        Livewire::actingAs($user)
+            ->test(ShowTasks::class)
+            ->set('newTaskTitle', 'Brand new task!')
+            ->call('addTask');
+
+        $this->assertEquals(1, $user->tasks()->count());
+    }
+
+    /** @test */
+    public function the_task_title_is_required()
+    {
+        Livewire::actingAs(User::factory()->create())
+            ->test(ShowTasks::class)
+            ->set('newTaskTitle', '')
+            ->call('addTask')
+            ->assertHasErrors(['newTaskTitle' => 'required']);
+    }
+
+    /** @test */
+    public function it_resets_task_title_after_adding()
+    {
+        Livewire::actingAs(User::factory()->create())
+            ->test(ShowTasks::class)
+            ->set('newTaskTitle', 'Brand new task!')
+            ->call('addTask')
+            ->assertSet('title', '');
     }
 }

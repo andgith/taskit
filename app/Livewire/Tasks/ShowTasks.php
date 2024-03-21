@@ -4,9 +4,13 @@ namespace App\Livewire\Tasks;
 
 use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Validate;
 
 class ShowTasks extends Component
 {
+    #[Validate('required')]
+    public $newTaskTitle = '';
+
     #[Layout('layouts.app')]
     public function render()
     {
@@ -16,5 +20,20 @@ class ShowTasks extends Component
                 ->tasks()
                 ->get(),
         ]);
+    }
+
+    public function addTask()
+    {
+        $this->validate();
+
+        auth()
+            ->user()
+            ->tasks()
+            ->create([
+                'title' => $this->newTaskTitle,
+                'description' => ''
+            ]);
+
+        $this->reset();
     }
 }
