@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
+        User::factory()->hasTasks(4)->create([
             'name' => 'Test User',
             'email' => 'test@taskit.test',
             'password' => bcrypt('password'),
