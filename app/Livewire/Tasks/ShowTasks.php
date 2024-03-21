@@ -18,6 +18,8 @@ class ShowTasks extends Component
             'tasks' => auth()
                 ->user()
                 ->tasks()
+                ->orderBy('pinned', 'desc')
+                ->orderBy('updated_at', 'desc')
                 ->get(),
         ]);
     }

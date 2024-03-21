@@ -27,4 +27,13 @@ class TaskListItem extends Component
 
         $this->dispatch('updated');
     }
+
+    public function togglePinned()
+    {
+        $this->authorize('update', $this->task);
+
+        $this->task->togglePinned();
+
+        $this->dispatch('updated');
+    }
 }

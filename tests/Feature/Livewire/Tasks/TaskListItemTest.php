@@ -54,4 +54,38 @@ class TaskListItemTest extends TestCase
             ->call('toggleComplete')
             ->assertForbidden();
     }
+
+    /** @test */
+    public function it_can_toggle_pinned_status()
+    {
+        $user = User::factory()->create();
+
+        $task = Task::factory()->for($user)->create([
+            'pinned' => false
+        ]);
+
+        Livewire::actingAs($user)->test(TaskListItem::class, ['task' => $task])
+            ->call('togglePinned');
+
+        $this->assertTrue($task->fresh()->pinned);
+
+        Livewire::actingAs($user)->test(TaskListItem::class, ['task' => $task])
+            ->call('togglePinned');
+
+        $this->assertFalse($task->fresh()->pinned);
+    }
+
+    /** @test */
+    public function a_user_can_only_toggle_pinned_for_own_tasks()
+    {
+        $user = User::factory()->create();
+
+        $task = Task::factory()->create([
+            'pinned' => false
+        ]);
+
+        Livewire::actingAs($user)->test(TaskListItem::class, ['task' => $task])
+            ->call('togglePinned')
+            ->assertForbidden();
+    }
 }

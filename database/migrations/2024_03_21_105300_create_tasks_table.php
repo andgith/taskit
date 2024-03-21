@@ -15,8 +15,7 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->text('description');
-            $table->dateTime('due_date')->nullable();
+            $table->boolean('pinned')->default(false);
             $table->dateTime('completed_at')->nullable();
             $table->foreignIdFor(User::class)->constrained();
             $table->timestamps();

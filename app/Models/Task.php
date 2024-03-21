@@ -18,6 +18,19 @@ class Task extends Model
     protected $fillable = ['title', 'description', 'due_date'];
 
     /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'completed_at' => 'datetime',
+            'pinned' => 'boolean'
+        ];
+    }
+
+    /**
      * Get the user that the task belongs to.
      */
     public function user(): BelongsTo
@@ -28,6 +41,14 @@ class Task extends Model
     public function toggleComplete(): bool
     {
         $this->completed_at = $this->completed_at ? null : now();
+        $this->save();
+
+        return true;
+    }
+
+    public function togglePinned(): bool
+    {
+        $this->pinned = ! $this->pinned;
         $this->save();
 
         return true;
