@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\TaskCompleted;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,7 +16,7 @@ class Task extends Model
      *
      * @var array
      */
-    protected $fillable = ['title', 'description', 'due_date'];
+    protected $fillable = ['title'];
 
     /**
      * Get the attributes that should be cast.
