@@ -24,4 +24,12 @@ class Task extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function toggleComplete(): bool
+    {
+        $this->completed_at = $this->completed_at ? null : now();
+        $this->save();
+
+        return true;
+    }
 }
