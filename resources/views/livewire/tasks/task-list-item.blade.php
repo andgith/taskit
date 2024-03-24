@@ -9,7 +9,7 @@
             <div class="min-w-0 flex-auto">
                 <x-dialog wire:model="showEditDialog">
                     <x-dialog.button>
-                        <button type="button" class="text-sm font-semibold leading-6 text-white">
+                        <button wire:click="showEditDialog = true" type="button" class="text-sm font-semibold leading-6 text-white">
                             {{ $task->title }}
                         </button>
                     </x-dialog.button>
