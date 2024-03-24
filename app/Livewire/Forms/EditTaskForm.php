@@ -16,7 +16,7 @@ class EditTaskForm extends Form
     #[Validate('nullable|max:1000')]
     public $description = '';
 
-    #[Validate('nullable|date')]
+    #[Validate('nullable|date|after_or_equal:today')]
     public $dueDate = null;
 
     #[Validate('required')]

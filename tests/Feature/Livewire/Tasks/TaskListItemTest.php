@@ -113,7 +113,7 @@ class TaskListItemTest extends TestCase
         Livewire::actingAs($user)->test(TaskListItem::class, ['task' => $task])
             ->set('form.title', 'This is a new title')
             ->set('form.description', 'A brand new description')
-            ->set('form.dueDate', '2024-03-21')
+            ->set('form.dueDate', $date = now()->addDay())
             ->set('form.priority', 1)
             ->call('update')
             ->assertOk();
@@ -122,7 +122,7 @@ class TaskListItemTest extends TestCase
             'id' => $task->id,
             'title' => 'This is a new title',
             'description' => 'A brand new description',
-            'due_date' => '2024-03-21 00:00:00',
+            'due_date' => $date,
             'priority' => 1,
         ]);
     }
@@ -138,5 +138,21 @@ class TaskListItemTest extends TestCase
             ->set('form.title', 'This is a new title')
             ->call('resetForm')
             ->assertSet('form.title', $task->title);
+    }
+
+    /** @test */
+    public function due_date_must_be_in_future()
+    {
+        $user = User::factory()->create();
+
+        $task = Task::factory()->for($user)->create();
+
+        Livewire::actingAs($user)->test(TaskListItem::class, ['task' => $task])
+            ->set('form.title', 'This is a new title')
+            ->set('form.description', 'A brand new description')
+            ->set('form.dueDate', $date = now()->subDay())
+            ->set('form.priority', 1)
+            ->call('update')
+            ->assertHasErrors('form.dueDate');
     }
 }
