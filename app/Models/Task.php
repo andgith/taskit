@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\TaskPriority;
 use App\Events\TaskCompleted;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,7 +17,7 @@ class Task extends Model
      *
      * @var array
      */
-    protected $fillable = ['title'];
+    protected $fillable = ['title', 'description', 'due_date', 'priority'];
 
     /**
      * Get the attributes that should be cast.
@@ -27,7 +28,9 @@ class Task extends Model
     {
         return [
             'completed_at' => 'datetime',
-            'pinned' => 'boolean'
+            'pinned' => 'boolean',
+            'due_date' => 'datetime',
+            'priority' => TaskPriority::class,
         ];
     }
 
