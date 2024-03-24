@@ -20,6 +20,10 @@ class TaskFactory extends Factory
         return [
             'user_id' => User::factory(),
             'title' => $this->faker->sentence,
+            'description' => $this->faker->paragraph,
+            'due_date' => $this->faker->dateTimeBetween('now', '+1 month'),
+            'priority' => $this->faker->numberBetween(1, 4),
+            'pinned' => false,
         ];
     }
 }

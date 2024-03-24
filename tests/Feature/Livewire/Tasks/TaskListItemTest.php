@@ -2,13 +2,13 @@
 
 namespace Tests\Feature\Livewire\Tasks;
 
-use App\Livewire\Tasks\TaskListItem;
-use App\Models\Task;
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Livewire\Livewire;
 use Tests\TestCase;
+use App\Models\User;
+use App\Models\Task;
+use Livewire\Livewire;
+use App\Livewire\Tasks\TaskListItem;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class TaskListItemTest extends TestCase
 {
@@ -17,7 +17,7 @@ class TaskListItemTest extends TestCase
     /** @test */
     public function renders_successfully()
     {
-        Livewire::test(TaskListItem::class)
+        Livewire::test(TaskListItem::class, ['task' => Task::factory()->create()])
             ->assertStatus(200);
     }
 
@@ -87,5 +87,56 @@ class TaskListItemTest extends TestCase
         Livewire::actingAs($user)->test(TaskListItem::class, ['task' => $task])
             ->call('togglePinned')
             ->assertForbidden();
+    }
+
+    /** @test */
+    public function it_sets_edit_form_fields()
+    {
+        $user = User::factory()->create();
+
+        $task = Task::factory()->for($user)->create();
+
+        Livewire::actingAs($user)->test(TaskListItem::class, ['task' => $task])
+            ->assertSet('form.title', $task->title)
+            ->assertSet('form.description', $task->description)
+            ->assertSet('form.dueDate', $task->due_date->format('Y-m-d'))
+            ->assertSet('form.priority', $task->priority);
+    }
+
+    /** @test */
+    public function it_can_update_a_task()
+    {
+        $user = User::factory()->create();
+
+        $task = Task::factory()->for($user)->create();
+
+        Livewire::actingAs($user)->test(TaskListItem::class, ['task' => $task])
+            ->set('form.title', 'This is a new title')
+            ->set('form.description', 'A brand new description')
+            ->set('form.dueDate', '2024-03-21')
+            ->set('form.priority', 1)
+            ->call('update')
+            ->assertOk();
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
+            'title' => 'This is a new title',
+            'description' => 'A brand new description',
+            'due_date' => '2024-03-21 00:00:00',
+            'priority' => 1,
+        ]);
+    }
+
+    /** @test */
+    public function it_can_reset_edit_form()
+    {
+        $user = User::factory()->create();
+
+        $task = Task::factory()->for($user)->create();
+
+        Livewire::actingAs($user)->test(TaskListItem::class, ['task' => $task])
+            ->set('form.title', 'This is a new title')
+            ->call('resetForm')
+            ->assertSet('form.title', $task->title);
     }
 }
