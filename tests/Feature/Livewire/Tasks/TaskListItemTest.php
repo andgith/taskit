@@ -42,6 +42,20 @@ class TaskListItemTest extends TestCase
     }
 
     /** @test */
+    public function it_dispatches_updated_event_after_toggling_completed_status()
+    {
+        $user = User::factory()->create();
+
+        $task = Task::factory()->for($user)->create([
+            'completed_at' => null
+        ]);
+
+        Livewire::actingAs($user)->test(TaskListItem::class, ['task' => $task])
+            ->call('toggleComplete')
+            ->assertDispatched('updated');
+    }
+
+    /** @test */
     public function a_user_can_only_toggle_status_for_own_tasks()
     {
         $user = User::factory()->create();
@@ -73,6 +87,20 @@ class TaskListItemTest extends TestCase
             ->call('togglePinned');
 
         $this->assertFalse($task->fresh()->pinned);
+    }
+
+    /** @test */
+    public function it_dispatches_update_event_after_toggling_pinned()
+    {
+        $user = User::factory()->create();
+
+        $task = Task::factory()->for($user)->create([
+            'pinned' => false
+        ]);
+
+        Livewire::actingAs($user)->test(TaskListItem::class, ['task' => $task])
+            ->call('togglePinned')
+            ->assertDispatched('updated');
     }
 
     /** @test */
@@ -125,6 +153,19 @@ class TaskListItemTest extends TestCase
             'due_date' => $date,
             'priority' => 1,
         ]);
+    }
+
+    /** @test */
+    public function it_dispatches_update_event_after_updating_task()
+    {
+        $user = User::factory()->create();
+
+        $task = Task::factory()->for($user)->create();
+
+        Livewire::actingAs($user)->test(TaskListItem::class, ['task' => $task])
+            ->set('form.title', 'This is a new title')
+            ->call('update')
+            ->assertDispatched('updated');
     }
 
     /** @test */

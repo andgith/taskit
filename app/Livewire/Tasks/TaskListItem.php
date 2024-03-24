@@ -41,6 +41,8 @@ class TaskListItem extends Component
         $this->task->refresh();
 
         $this->reset('showEditDialog');
+
+        $this->dispatch('updated');
     }
 
     public function toggleComplete()
