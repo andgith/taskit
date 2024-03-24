@@ -10,6 +10,13 @@ export default {
         './resources/views/**/*.blade.php',
     ],
 
+    safelist: [
+        'border-red-500',
+        'border-orange-500',
+        'border-yellow-500',
+        'border-white',
+    ],
+
     theme: {
         extend: {
             fontFamily: {
