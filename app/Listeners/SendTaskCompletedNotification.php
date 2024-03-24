@@ -7,7 +7,7 @@ use App\Notifications\TaskCompletedNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class SendTaskCompletedNotification
+class SendTaskCompletedNotification implements ShouldQueue
 {
     /**
      * Create the event listener.
