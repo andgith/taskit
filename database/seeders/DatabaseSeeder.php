@@ -18,5 +18,23 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@taskit.test',
             'password' => bcrypt('password'),
         ]);
+
+        $startDate = now()->subMonths(12)->startOfMonth();
+        $endDate = now()->endOfMonth();
+
+        while ($startDate->lessThanOrEqualTo($endDate)) {
+            $numberOfUsers = rand(1, 10); // Random number of users per month
+
+            for ($i = 0; $i < $numberOfUsers; $i++) {
+                User::factory()->create(
+                    [
+                        'created_at' => $startDate,
+                        'updated_at' => $startDate,
+                    ]
+                );
+            }
+
+            $startDate->addMonth(); // Move to the next month
+        }
     }
 }
